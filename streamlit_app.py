@@ -2,14 +2,6 @@ import streamlit as st
 import pickle
 import numpy as np
 import pandas as pd
-#import seaborn as sns
-from pathlib import Path
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
-from sklearn.linear_model import ElasticNet
-from sklearn.ensemble import RandomForestRegressor
 from sklearn import datasets
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import KFold, cross_val_score
