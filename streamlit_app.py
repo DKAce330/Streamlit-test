@@ -18,7 +18,10 @@ from sklearn.preprocessing import StandardScaler,OneHotEncoder, LabelEncoder
 from xgboost import XGBClassifier
 #import tensorflow as tf
 
+df=pd.read_csv('processed_data_cleaned.csv')
+df.drop(columns=['track_id', 'track_name', 'track_artist','track_popularity','stream_count'], inplace=True)
 # Function to load models
+
 def load_models():
   model1 = pickle.load(open("model.pkl", "rb"))
   return model1
@@ -27,28 +30,9 @@ def load_models():
 model = load_models()
 
 # Form variables
-variables = ['track_popularity', 'danceability', 'energy', 'key', 'loudness', 'mode',
+variables = ['danceability', 'energy', 'key', 'loudness', 'mode',
        'speechiness', 'acousticness', 'instrumentalness', 'liveness',
-       'valence', 'tempo', 'duration_sec', 'months',
-       'playlist_genre_latin', 'playlist_genre_pop', 'playlist_genre_r&b',
-       'playlist_genre_rap', 'playlist_genre_rock',
-       'playlist_subgenre_big room', 'playlist_subgenre_classic rock',
-       'playlist_subgenre_dance pop', 'playlist_subgenre_electro house',
-       'playlist_subgenre_electropop', 'playlist_subgenre_gangster rap',
-       'playlist_subgenre_hard rock', 'playlist_subgenre_hip hop',
-       'playlist_subgenre_hip pop', 'playlist_subgenre_indie poptimism',
-       'playlist_subgenre_latin hip hop', 'playlist_subgenre_latin pop',
-       'playlist_subgenre_neo soul', 'playlist_subgenre_new jack swing',
-       'playlist_subgenre_permanent wave', 'playlist_subgenre_pop edm',
-       'playlist_subgenre_post-teen pop',
-       'playlist_subgenre_progressive electro house',
-       'playlist_subgenre_reggaeton', 'playlist_subgenre_southern hip hop',
-       'playlist_subgenre_trap', 'playlist_subgenre_tropical',
-       'playlist_subgenre_urban contemporary']
-
-def predict(model, user_input):
-  prediction = model.predict(user_input)
-  return prediction
+       'valence', 'tempo', 'duration_sec', 'months','playlist_genre','playlist_subgenre']
 
 st.title("Regression Model Dashboard")
 
@@ -56,29 +40,13 @@ st.title("Regression Model Dashboard")
 col1 = st.columns(1)
 
 column_groups = {
-  "Genre": ['playlist_genre_latin', 'playlist_genre_pop', 'playlist_genre_r&b',
-       'playlist_genre_rap', 'playlist_genre_rock',],
-  "Subgenre": ['playlist_subgenre_big room', 'playlist_subgenre_classic rock',
-       'playlist_subgenre_dance pop', 'playlist_subgenre_electro house',
-       'playlist_subgenre_electropop', 'playlist_subgenre_gangster rap',
-       'playlist_subgenre_hard rock', 'playlist_subgenre_hip hop',
-       'playlist_subgenre_hip pop', 'playlist_subgenre_indie poptimism',
-       'playlist_subgenre_latin hip hop', 'playlist_subgenre_latin pop',
-       'playlist_subgenre_neo soul', 'playlist_subgenre_new jack swing',
-       'playlist_subgenre_permanent wave', 'playlist_subgenre_pop edm',
-       'playlist_subgenre_post-teen pop',
-       'playlist_subgenre_progressive electro house',
-       'playlist_subgenre_reggaeton', 'playlist_subgenre_southern hip hop',
-       'playlist_subgenre_trap', 'playlist_subgenre_tropical',
-       'playlist_subgenre_urban contemporary']    
+  "playlist_genre": df['playlist_genre'].unique(),
+  "playlist_subgenre": df['playlist_subgenre'].unique()    
 }
-int_vars = ['track_popularity', 'danceability', 'energy', 'key', 'loudness', 'mode',
+int_vars = ['danceability', 'energy', 'key', 'loudness', 'mode',
               'speechiness', 'acousticness', 'instrumentalness', 'liveness',
               'valence', 'tempo', 'duration_sec', 'months']
-import pandas as pd
 
-# Load your data from CSV (replace with your actual data loading logic)
-df = pd.read_csv("IDKMAN.csv")
 
 # Define min/max values using data
 int_var_ranges = {var: (df[var].min(), df[var].max()) for var in int_vars}
@@ -95,8 +63,19 @@ for var in variables:
         min_value, max_value = int_var_ranges[var]
         user_input[var] = st.slider(var, min_value=min_value, max_value=max_value)
 
+#concat the inputs
+user_input_df=pd.DataFrame(user_input,index=[0])
+df = pd.concat([df, user_input_df], axis=0)
+
+#make dummies
+df = pd.get_dummies(df, columns=['playlist_genre', 'playlist_subgenre'], drop_first=True, dtype=int)
+
+#remove last row to make prediction
+user_input_df=df.iloc[-1,:]
+user_input_df=pd.DataFrame(user_input_df.values.reshape(1,-1),columns=df.columns)
+
 # Submit button and prediction display
 if st.button("Predict"):
-  # Make prediction using the chosen model
-  prediction = predict(model, user_input)
-  st.write(f"Number of predicted streams: {prediction}")
+    # Make prediction using the chosen model
+    prediction = model.predict(user_input_df)
+    st.write(f"Number of predicted streams: {prediction}")
