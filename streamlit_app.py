@@ -53,7 +53,12 @@ def predict(model, user_input):
 st.title("Regression Model Dashboard")
 
 #Dashboard layout
-col1 = st.columns(1)
+col1 = st.columns(1)  # Correctly create a Streamlit column layout
+
+with col1:  # Now using the layout with context manager
+    # Display charts or text for model 1
+    st.subheader("XGB Model")
+    # Add charts or text based on model 1
 
 column_groups = {
   "Genre": ['playlist_genre_latin', 'playlist_genre_pop', 'playlist_genre_r&b',
@@ -70,30 +75,24 @@ column_groups = {
        'playlist_subgenre_progressive electro house',
        'playlist_subgenre_reggaeton', 'playlist_subgenre_southern hip hop',
        'playlist_subgenre_trap', 'playlist_subgenre_tropical',
-       'playlist_subgenre_urban contemporary']    
+       'playlist_subgenre_urban contemporary'],    
 }
 int_vars = ['track_popularity', 'danceability', 'energy', 'key', 'loudness', 'mode',
-              'speechiness', 'acousticness', 'instrumentalness', 'liveness',
-              'valence', 'tempo', 'duration_sec', 'months']
-import pandas as pd
-
-# Load your data from CSV (replace with your actual data loading logic)
-df = pd.read_csv("IDKMAN.csv")
-
-# Define min/max values using data
-int_var_ranges = {var: (df[var].min(), df[var].max()) for var in int_vars}
+       'speechiness', 'acousticness', 'instrumentalness', 'liveness',
+       'valence', 'tempo', 'duration_sec', 'months']
 
 # User input form
 st.subheader("Make a Prediction")
 
 user_input = {}
 for var in variables:
-    if var in column_groups:  # Use selectbox for genres
-        selected_option = st.selectbox(var, column_groups[var])
-        user_input[var] = selected_option
-    elif var in int_vars:  # Use slider for numerical variables
-        min_value, max_value = int_var_ranges[var]
-        user_input[var] = st.slider(var, min_value=min_value, max_value=max_value)
+  # Removed unnecessary with statement
+  if var in column_groups:
+    # Use radio buttons or checkboxes based on your requirement
+    selected_option = st.radio(var, column_groups[var])
+    user_input[var] = selected_option
+  else:
+    user_input[var] = st.slider(var, min_value=..., max_value=..., value=...)
 
 # Submit button and prediction display
 if st.button("Predict"):
