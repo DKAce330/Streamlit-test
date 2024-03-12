@@ -73,21 +73,27 @@ column_groups = {
        'playlist_subgenre_urban contemporary']    
 }
 int_vars = ['track_popularity', 'danceability', 'energy', 'key', 'loudness', 'mode',
-       'speechiness', 'acousticness', 'instrumentalness', 'liveness',
-       'valence', 'tempo', 'duration_sec', 'months']
+              'speechiness', 'acousticness', 'instrumentalness', 'liveness',
+              'valence', 'tempo', 'duration_sec', 'months']
+import pandas as pd
+
+# Load your data from CSV (replace with your actual data loading logic)
+df = pd.read_csv("IDKMAN.csv")
+
+# Define min/max values using data
+int_var_ranges = {var: (df[var].min(), df[var].max()) for var in int_vars}
 
 # User input form
 st.subheader("Make a Prediction")
 
 user_input = {}
 for var in variables:
-  # Removed unnecessary with statement
-  if var in column_groups:
-    # Use radio buttons or checkboxes based on your requirement
-    selected_option = st.radio(var, column_groups[var])
-    user_input[var] = selected_option
-  else:
-    user_input[var] = st.slider(var, min_value=1, max_value=100, value=50)
+    if var in column_groups:  # Use selectbox for genres
+        selected_option = st.selectbox(var, column_groups[var])
+        user_input[var] = selected_option
+    elif var in int_vars:  # Use slider for numerical variables
+        min_value, max_value = int_var_ranges[var]
+        user_input[var] = st.slider(var, min_value=min_value, max_value=max_value)
 
 # Submit button and prediction display
 if st.button("Predict"):
