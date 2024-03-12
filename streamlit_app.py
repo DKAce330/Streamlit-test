@@ -53,12 +53,7 @@ def predict(model, user_input):
 st.title("Regression Model Dashboard")
 
 #Dashboard layout
-col1 = st.columns(1)  # Correctly create a Streamlit column layout
-
-with col1:
-    # Display charts or text for model 1
-    st.subheader("XGB Model")
-    # Add charts or text based on model 1
+col1 = st.columns(1)
 
 column_groups = {
   "Genre": ['playlist_genre_latin', 'playlist_genre_pop', 'playlist_genre_r&b',
@@ -75,7 +70,7 @@ column_groups = {
        'playlist_subgenre_progressive electro house',
        'playlist_subgenre_reggaeton', 'playlist_subgenre_southern hip hop',
        'playlist_subgenre_trap', 'playlist_subgenre_tropical',
-       'playlist_subgenre_urban contemporary'],    
+       'playlist_subgenre_urban contemporary']    
 }
 int_vars = ['track_popularity', 'danceability', 'energy', 'key', 'loudness', 'mode',
        'speechiness', 'acousticness', 'instrumentalness', 'liveness',
@@ -92,7 +87,7 @@ for var in variables:
     selected_option = st.radio(var, column_groups[var])
     user_input[var] = selected_option
   else:
-    user_input[var] = st.slider(var, min_value=..., max_value=..., value=...)
+    user_input[var] = st.slider(var, min_value=1, max_value=100, value=50)
 
 # Submit button and prediction display
 if st.button("Predict"):
