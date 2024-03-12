@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 #import seaborn as sns
 from pathlib import Path
-import sklearn
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
