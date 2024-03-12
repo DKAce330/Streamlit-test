@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 #import seaborn as sns
 from pathlib import Path
+import sklearn
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -37,12 +38,7 @@ variables = ['danceability', 'energy', 'key', 'loudness', 'mode',
 st.title("Regression Model Dashboard")
 
 #Dashboard layout
-col1 = st.columns(1)  # Correctly create a Streamlit column layout
-
-with col1:  # Now using the layout with context manager
-    # Display charts or text for model 1
-    st.subheader("XGB Model")
-    # Add charts or text based on model 1
+col1 = st.columns(1)
 
 column_groups = {
   "playlist_genre": df['playlist_genre'].unique(),
